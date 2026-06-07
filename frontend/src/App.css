@@ -1,0 +1,119 @@
+.leaflet-container {
+  font: inherit;
+  background: var(--surface-muted);
+}
+
+/*
+ * Plain CSS for layout/values that this Tailwind build fails to generate from
+ * utility classes (arbitrary [..] values, slash opacity, and ring/outline colors).
+ */
+.results-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 1024px) {
+  .results-grid {
+    grid-template-columns: minmax(0, 1.7fr) minmax(320px, 1fr);
+  }
+}
+
+.map-frame {
+  height: 300px;
+}
+
+@media (min-width: 640px) {
+  .map-frame {
+    height: 380px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .map-frame {
+    height: 460px;
+  }
+}
+
+.menu {
+  z-index: 1100;
+}
+
+.field:focus,
+.field:focus-visible {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px var(--brand-subtle);
+}
+
+.focus-ring:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+/* Branded map markers */
+.map-pin {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  border: 2px solid var(--surface);
+  box-shadow: 0 4px 10px -2px rgba(2, 6, 23, 0.4);
+  animation: markerFade 0.4s ease both;
+}
+
+.map-pin > * {
+  transform: rotate(45deg);
+}
+
+@keyframes markerFade {
+  from {
+    opacity: 0;
+    transform: rotate(-45deg) translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(-45deg) translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .map-pin {
+    animation: none;
+  }
+}
+
+/* Leaflet tooltip + attribution adapt to dark mode */
+.dark .leaflet-tooltip {
+  background: var(--surface);
+  color: var(--foreground);
+  border-color: var(--border-strong);
+  box-shadow: 0 6px 18px -8px rgba(0, 0, 0, 0.6);
+}
+
+.dark .leaflet-tooltip-top::before,
+.dark .leaflet-tooltip-bottom::before,
+.dark .leaflet-tooltip-left::before,
+.dark .leaflet-tooltip-right::before {
+  border-top-color: var(--surface);
+  border-bottom-color: var(--surface);
+}
+
+.dark .leaflet-control-attribution {
+  background: rgba(17, 26, 46, 0.8);
+  color: var(--muted);
+}
+
+.dark .leaflet-control-attribution a {
+  color: var(--brand-subtle-foreground);
+}
+
+.dark .leaflet-bar a {
+  background: var(--surface);
+  color: var(--foreground);
+  border-bottom-color: var(--border);
+}
+
+.dark .leaflet-bar a:hover {
+  background: var(--surface-muted);
+}

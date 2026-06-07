@@ -1,0 +1,6 @@
+[project]
+name = "myradl-free-guarantee-backend"
+version = "0.1.0" # x-release-please-version
+description = "FastAPI backend for MyRadl Free-Guarantee Planner"
+requires-python = ">=3.11"
+

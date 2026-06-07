@@ -1,0 +1,101 @@
+@import "tailwindcss";
+/* Recursive ./** globbing misses the components dir in this Tailwind build, so source each location explicitly. */
+@source "./*.{ts,tsx}";
+@source "./components/**/*.{ts,tsx}";
+@source "./lib/**/*.{ts,tsx}";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: #f5f8f7;
+  --surface: #ffffff;
+  --surface-muted: #f1f5f4;
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --foreground: #0f172a;
+  --muted: #475569;
+  --muted-foreground: #64748b;
+
+  --brand: #059669;
+  --brand-hover: #047857;
+  --brand-foreground: #ffffff;
+  --brand-subtle: #d1fae5;
+  --brand-subtle-foreground: #047857;
+
+  --status-free: #059669;
+  --status-free-subtle: #d1fae5;
+  --status-reduced: #b45309;
+  --status-reduced-subtle: #fef3c7;
+  --status-over: #e11d48;
+  --status-over-subtle: #ffe4e6;
+}
+
+.dark {
+  --background: #0b1120;
+  --surface: #111a2e;
+  --surface-muted: #1b2740;
+  --border: #25324d;
+  --border-strong: #3a4a6b;
+  --foreground: #e7edf6;
+  --muted: #aab8cc;
+  --muted-foreground: #7e8da6;
+
+  --brand: #10b981;
+  --brand-hover: #34d399;
+  --brand-foreground: #04221a;
+  --brand-subtle: rgba(16, 185, 129, 0.16);
+  --brand-subtle-foreground: #6ee7b7;
+
+  --status-free: #34d399;
+  --status-free-subtle: rgba(16, 185, 129, 0.16);
+  --status-reduced: #fbbf24;
+  --status-reduced-subtle: rgba(251, 191, 36, 0.16);
+  --status-over: #fb7185;
+  --status-over-subtle: rgba(244, 63, 94, 0.16);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-brand: var(--brand);
+  --color-brand-hover: var(--brand-hover);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-brand-subtle: var(--brand-subtle);
+  --color-brand-subtle-foreground: var(--brand-subtle-foreground);
+
+  --color-status-free: var(--status-free);
+  --color-status-free-subtle: var(--status-free-subtle);
+  --color-status-reduced: var(--status-reduced);
+  --color-status-reduced-subtle: var(--status-reduced-subtle);
+  --color-status-over: var(--status-over);
+  --color-status-over-subtle: var(--status-over-subtle);
+
+  --radius-card: 16px;
+
+  --shadow-card: 0 1px 2px rgba(2, 6, 23, 0.04), 0 8px 24px -16px rgba(2, 6, 23, 0.18);
+
+  --font-sans:
+    Inter, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
