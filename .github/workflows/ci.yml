@@ -38,3 +38,5 @@ jobs:
           cache-dependency-path: backend/requirements.txt
       - run: pip install -r requirements.txt
       - run: python -c "from app.main import app; print('import ok')"
+        env:
+          ORS_API_KEY: ci-placeholder
