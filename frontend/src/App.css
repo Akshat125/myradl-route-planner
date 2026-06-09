@@ -3,18 +3,30 @@
   background: var(--surface-muted);
 }
 
-/*
- * Plain CSS for layout/values that this Tailwind build fails to generate from
- * utility classes (arbitrary [..] values, slash opacity, and ring/outline colors).
- */
 .results-grid {
   display: grid;
   gap: 1rem;
 }
 
+.results-verdict {
+  order: 1;
+}
+
+.results-map {
+  order: 2;
+}
+
 @media (min-width: 1024px) {
   .results-grid {
     grid-template-columns: minmax(0, 1.7fr) minmax(320px, 1fr);
+  }
+
+  .results-map {
+    order: 1;
+  }
+
+  .results-verdict {
+    order: 2;
   }
 }
 
@@ -49,7 +61,6 @@
   outline-offset: 2px;
 }
 
-/* Branded map markers */
 .map-pin {
   display: grid;
   place-items: center;
@@ -83,7 +94,6 @@
   }
 }
 
-/* Leaflet tooltip + attribution adapt to dark mode */
 .dark .leaflet-tooltip {
   background: var(--surface);
   color: var(--foreground);
@@ -116,4 +126,136 @@
 
 .dark .leaflet-bar a:hover {
   background: var(--surface-muted);
+}
+
+.verdict-headline {
+  font-family: var(--font-display);
+  font-size: 2.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.verdict-hero {
+  border-radius: 12px;
+  padding: 1.125rem 1.25rem;
+}
+
+.journey-section {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+}
+
+.journey-section-label {
+  margin: 0 0 0.875rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.verdict-hero-free {
+  background: var(--status-free-subtle);
+}
+
+.verdict-hero-reduced {
+  background: var(--status-reduced-subtle);
+}
+
+.verdict-hero-over {
+  background: var(--status-over-subtle);
+}
+
+.verdict-result {
+  animation: verdictReveal 0.25s ease both;
+}
+
+@keyframes verdictReveal {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.journey-timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.journey-step {
+  display: flex;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.journey-step + .journey-step {
+  margin-top: 0.5rem;
+}
+
+.journey-rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 12px;
+  flex-shrink: 0;
+  padding-top: 0.875rem;
+}
+
+.journey-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--brand);
+  box-shadow: 0 0 0 3px var(--brand-subtle);
+}
+
+.journey-step-walk .journey-dot {
+  background: var(--muted-foreground);
+  box-shadow: 0 0 0 3px var(--surface-muted);
+}
+
+.journey-line {
+  flex: 1;
+  width: 2px;
+  min-height: 1rem;
+  margin-top: 4px;
+  background: var(--border-strong);
+  border-radius: 1px;
+}
+
+.journey-step-bike .journey-line {
+  background: var(--status-free);
+  opacity: 0.45;
+}
+
+.journey-card {
+  flex: 1;
+  min-width: 0;
+  display: block;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  padding: 0.75rem 0.875rem;
+  text-decoration: none;
+  color: inherit;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.journey-card:hover {
+  border-color: var(--border-strong);
+  background: var(--surface-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .verdict-result {
+    animation: none;
+  }
 }

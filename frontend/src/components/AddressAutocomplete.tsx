@@ -42,7 +42,7 @@ export function AddressAutocomplete({
     }
     const query = value.trim()
     if (query.length < MIN_QUERY) {
-      /* eslint-disable react-hooks/set-state-in-effect -- reset transient lookup state when the query is too short */
+      /* eslint-disable react-hooks/set-state-in-effect */
       setSuggestions([])
       setError(null)
       setLoading(false)

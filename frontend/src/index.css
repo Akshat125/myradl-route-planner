@@ -1,8 +1,4 @@
 @import "tailwindcss";
-/* Recursive ./** globbing misses the components dir in this Tailwind build, so source each location explicitly. */
-@source "./*.{ts,tsx}";
-@source "./components/**/*.{ts,tsx}";
-@source "./lib/**/*.{ts,tsx}";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -81,8 +77,8 @@
 
   --shadow-card: 0 1px 2px rgba(2, 6, 23, 0.04), 0 8px 24px -16px rgba(2, 6, 23, 0.18);
 
-  --font-sans:
-    Inter, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-sans: "Geist", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "General Sans", var(--font-sans);
 }
 
 html,
@@ -96,6 +92,11 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
+  font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.font-display {
+  font-family: var(--font-display);
 }

@@ -20,7 +20,7 @@ export function useTheme() {
     try {
       localStorage.setItem(STORAGE_KEY, theme)
     } catch {
-      // ignore storage failures (private mode, etc.)
+      void 0
     }
   }, [theme])
 

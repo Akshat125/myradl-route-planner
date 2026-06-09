@@ -13,14 +13,6 @@ export type Station = {
   distance_m?: number
 }
 
-export type StationsResponse = {
-  network_id: string
-  stations: Station[]
-  last_updated: number | null
-  data_age_seconds: number | null
-  stale: boolean
-}
-
 export type PlanResponse = {
   status: 'FREE' | 'REDUCED' | 'OVER'
   bike_type: BikeType
@@ -74,7 +66,7 @@ async function parseResponse<T>(response: Response): Promise<T> {
       const body = await response.json()
       if (body.detail) msg = body.detail
     } catch {
-      // ignore JSON parse failures
+      void 0
     }
     throw new Error(msg)
   }
@@ -100,11 +92,6 @@ export async function fetchAutocomplete(
   const res = await fetch(`${API_BASE}/geocode/autocomplete?${params.toString()}`, { signal })
   const body = await parseResponse<{ suggestions: AddressSuggestion[] }>(res)
   return body.suggestions ?? []
-}
-
-export async function fetchStations(): Promise<StationsResponse> {
-  const res = await fetch(`${API_BASE}/stations`)
-  return parseResponse<StationsResponse>(res)
 }
 
 export async function fetchPlan(payload: PlanRequest): Promise<PlanResponse> {

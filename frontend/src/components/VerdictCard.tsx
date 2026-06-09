@@ -23,46 +23,76 @@ function formatMinutes(seconds: number): string {
   return `${Math.round(seconds / 60)} min`
 }
 
+function formatDataAge(seconds: number | null): string {
+  if (seconds == null) return 'unknown age'
+  if (seconds < 60) return `${seconds}s ago`
+  const mins = Math.round(seconds / 60)
+  return mins === 1 ? '1 min ago' : `${mins} min ago`
+}
+
 const STATUS_META: Record<
   PlanResponse['status'],
-  { label: string; icon: ComponentType<{ className?: string }>; pill: string }
+  {
+    headline: string
+    subtitle: string
+    icon: ComponentType<{ className?: string }>
+    heroClass: string
+    textClass: string
+  }
 > = {
   FREE: {
-    label: 'Free window hit',
+    headline: 'Free ride',
+    subtitle: 'Bike leg fits within the 30-minute window',
     icon: CheckCircle2,
-    pill: 'bg-status-free-subtle text-status-free',
+    heroClass: 'verdict-hero verdict-hero-free',
+    textClass: 'text-status-free',
   },
   REDUCED: {
-    label: 'Reduced e-bike fare',
+    headline: 'Reduced fare',
+    subtitle: 'E-bike discount applies — bike leg under 30 minutes',
     icon: CircleAlert,
-    pill: 'bg-status-reduced-subtle text-status-reduced',
+    heroClass: 'verdict-hero verdict-hero-reduced',
+    textClass: 'text-status-reduced',
   },
   OVER: {
-    label: 'Over 30-minute window',
+    headline: 'Over 30 min',
+    subtitle: 'Bike leg exceeds the free 30-minute window',
     icon: CircleX,
-    pill: 'bg-status-over-subtle text-status-over',
+    heroClass: 'verdict-hero verdict-hero-over',
+    textClass: 'text-status-over',
   },
 }
 
 function VerdictSkeleton() {
   return (
     <section className={cardClass} aria-busy="true" aria-live="polite">
-      <div className="flex items-center justify-between gap-3">
-        <div className="h-6 w-24 animate-pulse rounded-md bg-surface-muted" />
-        <div className="h-6 w-28 animate-pulse rounded-full bg-surface-muted" />
+      <div className="verdict-hero animate-pulse bg-surface-muted">
+        <div className="h-10 w-36 rounded-lg bg-surface-muted" />
+        <div className="mt-3 h-5 w-40 rounded bg-surface-muted" />
       </div>
-      <div className="mt-5 flex items-baseline justify-between gap-4">
-        <div className="h-4 w-32 animate-pulse rounded bg-surface-muted" />
-        <div className="h-7 w-16 animate-pulse rounded bg-surface-muted" />
-      </div>
-      <div className="mt-6 space-y-2">
+      <div className="mt-6 space-y-4">
         {[0, 1, 2].map((i) => (
-          <div key={i} className="h-12 animate-pulse rounded-xl bg-surface-muted" />
+          <div key={i} className="flex gap-3">
+            <div className="h-16 w-3 shrink-0 rounded-full bg-surface-muted" />
+            <div className="h-16 flex-1 animate-pulse rounded-xl bg-surface-muted" />
+          </div>
         ))}
       </div>
       <span className="sr-only">Calculating your route…</span>
     </section>
   )
+}
+
+function FreshnessLine({ snapshot }: { snapshot: PlanResponse['snapshot'] }) {
+  const age = formatDataAge(snapshot.data_age_seconds)
+  if (snapshot.stale) {
+    return (
+      <p className="mt-4 text-xs text-status-reduced">
+        Dock data may be outdated ({age}). Availability can change quickly.
+      </p>
+    )
+  }
+  return <p className="mt-4 text-xs text-muted-foreground">Dock data updated {age}</p>
 }
 
 export function VerdictCard({ start, plan, loading, destinationLabel }: Props) {
@@ -103,59 +133,80 @@ export function VerdictCard({ start, plan, loading, destinationLabel }: Props) {
   const legTimes = [plan.walk_to_start_s, plan.bike_duration_s, plan.walk_to_end_s]
 
   return (
-    <section className={cardClass}>
-      <div className="flex items-center justify-between gap-3">
-        <h2 className="text-lg font-semibold">Verdict</h2>
-        <span
-          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${status.pill}`}
-        >
-          <StatusIcon className="size-3.5" />
-          {status.label}
-        </span>
-      </div>
-
-      <div className="mt-5 flex items-baseline justify-between gap-4">
-        <span className="text-sm text-muted">Estimated total time</span>
-        <span className="text-2xl font-semibold text-foreground">
-          {formatMinutes(plan.total_duration_s)}
-        </span>
+    <section className={`${cardClass} verdict-result`}>
+      <div className={status.heroClass}>
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <p className={`verdict-headline ${status.textClass}`}>{status.headline}</p>
+            <p className="mt-1 text-2xl font-semibold tabular-nums text-foreground">
+              {formatMinutes(plan.total_duration_s)}
+              <span className="ml-1.5 text-base font-normal text-muted">total</span>
+            </p>
+          </div>
+          <StatusIcon className={`size-8 shrink-0 ${status.textClass}`} aria-hidden="true" />
+        </div>
+        <p className="mt-2 text-sm text-muted">{status.subtitle}</p>
+        {plan.cost_eur > 0 ? (
+          <p className="mt-1 text-sm font-medium tabular-nums text-foreground">
+            Est. fare: €{plan.cost_eur.toFixed(2)}
+          </p>
+        ) : null}
       </div>
 
       {legs ? (
-        <ol className="mt-5 flex flex-col gap-2">
-          {legs.map((leg, index) => {
-            const ModeIcon = leg.mode === 'bicycling' ? Bike : Footprints
-            const badgeClass =
-              leg.mode === 'bicycling'
-                ? 'bg-status-free-subtle text-status-free'
-                : 'bg-brand-subtle text-brand-subtle-foreground'
-            return (
-              <li key={`${leg.fromLabel}-${leg.toLabel}`} className="min-w-0">
-                <a
-                  href={leg.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex min-w-0 items-center gap-3 rounded-xl border border-border p-3 text-foreground transition-colors hover:border-border-strong hover:bg-surface-muted"
-                >
-                  <span
-                    className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-2 py-1 text-xs font-semibold ${badgeClass}`}
+        <div className="journey-section">
+          <h3 className="journey-section-label">Your route</h3>
+          <ol className="journey-timeline">
+            {legs.map((leg, index) => {
+              const ModeIcon = leg.mode === 'bicycling' ? Bike : Footprints
+              const isBike = leg.mode === 'bicycling'
+              const stepClass = isBike ? 'journey-step-bike' : 'journey-step-walk'
+              const isLast = index === legs.length - 1
+              return (
+                <li key={`${leg.fromLabel}-${leg.toLabel}`} className={`journey-step ${stepClass}`}>
+                  <div className="journey-rail" aria-hidden="true">
+                    <span className="journey-dot" />
+                    {!isLast ? <span className="journey-line" /> : null}
+                  </div>
+                  <a
+                    href={leg.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="journey-card focus-ring"
                   >
-                    <ModeIcon className="size-3.5" aria-hidden="true" />
-                    {leg.modeLabel}
-                  </span>
-                  <span className="min-w-0 flex-1 truncate text-sm">
-                    {leg.fromLabel} → {leg.toLabel}
-                  </span>
-                  <span className="shrink-0 text-xs text-muted-foreground">
-                    {formatMinutes(legTimes[index])}
-                  </span>
-                  <ArrowUpRight className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
-                </a>
-              </li>
-            )
-          })}
-        </ol>
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                      <span
+                        className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-semibold ${
+                          isBike
+                            ? 'bg-status-free-subtle text-status-free'
+                            : 'bg-brand-subtle text-brand-subtle-foreground'
+                        }`}
+                      >
+                        <ModeIcon className="size-3.5" aria-hidden="true" />
+                        {leg.modeLabel}
+                      </span>
+                      <span className="text-xs tabular-nums text-muted-foreground">
+                        {formatMinutes(legTimes[index])}
+                      </span>
+                    </div>
+                    <p className="mt-1.5 text-sm font-medium leading-snug text-foreground">
+                      {leg.fromLabel} → {leg.toLabel}
+                    </p>
+                    <span className="mt-1 inline-flex items-center gap-1 text-xs text-muted-foreground">
+                      Open in Google Maps
+                      <ArrowUpRight className="size-3.5" aria-hidden="true" />
+                    </span>
+                  </a>
+                </li>
+              )
+            })}
+          </ol>
+        </div>
       ) : null}
+
+      <FreshnessLine snapshot={plan.snapshot} />
+
+      {plan.note ? <p className="mt-3 text-xs text-muted">{plan.note}</p> : null}
     </section>
   )
 }

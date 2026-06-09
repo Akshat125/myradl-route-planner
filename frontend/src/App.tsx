@@ -58,7 +58,6 @@ function App() {
   }, [])
 
   useEffect(() => {
-    // Geolocation is an external system; trigger the one-time lookup on mount.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     requestCurrentLocation()
   }, [requestCurrentLocation])
@@ -122,7 +121,9 @@ function App() {
             <Bike className="size-5" strokeWidth={2.25} aria-hidden="true" />
           </span>
           <div>
-            <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">MyRadl Route Planner</h1>
+            <h1 className="font-display text-xl font-semibold tracking-tight sm:text-2xl">
+              MyRadl Route Planner
+            </h1>
             <p className="text-sm text-muted">Free-ride planner for Munich&rsquo;s bike share</p>
           </div>
         </div>
@@ -170,13 +171,17 @@ function App() {
       ) : null}
 
       <section className="results-grid">
-        <Map start={start} plan={plan} theme={theme} />
-        <VerdictCard
-          start={start}
-          plan={plan}
-          loading={loading}
-          destinationLabel={destination.selected?.label ?? destination.query}
-        />
+        <div className="results-verdict">
+          <VerdictCard
+            start={start}
+            plan={plan}
+            loading={loading}
+            destinationLabel={destination.selected?.label ?? destination.query}
+          />
+        </div>
+        <div className="results-map">
+          <Map start={start} plan={plan} theme={theme} />
+        </div>
       </section>
     </main>
   )
