@@ -17,6 +17,7 @@ type Props = {
   plan: PlanResponse | null
   loading?: boolean
   destinationLabel?: string | null
+  reportUrl?: string | null
 }
 
 function formatMinutes(seconds: number): string {
@@ -95,7 +96,7 @@ function FreshnessLine({ snapshot }: { snapshot: PlanResponse['snapshot'] }) {
   return <p className="mt-4 text-xs text-muted-foreground">Dock data updated {age}</p>
 }
 
-export function VerdictCard({ start, plan, loading, destinationLabel }: Props) {
+export function VerdictCard({ start, plan, loading, destinationLabel, reportUrl }: Props) {
   if (loading) {
     return <VerdictSkeleton />
   }
@@ -207,6 +208,18 @@ export function VerdictCard({ start, plan, loading, destinationLabel }: Props) {
       <FreshnessLine snapshot={plan.snapshot} />
 
       {plan.note ? <p className="mt-3 text-xs text-muted">{plan.note}</p> : null}
+
+      {reportUrl ? (
+        <a
+          href={reportUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="focus-ring mt-4 inline-flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
+        >
+          Something looks wrong?
+          <ArrowUpRight className="size-3.5" aria-hidden="true" />
+        </a>
+      ) : null}
     </section>
   )
 }

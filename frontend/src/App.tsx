@@ -7,6 +7,7 @@ import { SearchBar } from './components/SearchBar'
 import { StartLocationControl } from './components/StartLocationControl'
 import { VerdictCard } from './components/VerdictCard'
 import { fetchPlan, type AddressSuggestion, type BikeType, type PlanResponse } from './lib/api'
+import { buildReportIssueUrl, type ReportContext } from './lib/reportIssue'
 import { useTheme } from './lib/useTheme'
 
 export type StartLocation = {
@@ -79,6 +80,17 @@ function App() {
   const handleDestinationText = (text: string) => {
     setDestination({ query: text, selected: null })
   }
+
+  const reportContext: ReportContext = {
+    start,
+    destinationQuery: destination.query,
+    destinationLabel: destination.selected?.label ?? null,
+    bikeType,
+    plan,
+    error,
+  }
+
+  const reportUrl = buildReportIssueUrl(reportContext)
 
   const submit = async () => {
     if (!start) {
@@ -161,13 +173,23 @@ function App() {
       />
 
       {error ? (
-        <p
+        <div
           role="alert"
           className="flex items-start gap-2 rounded-card border border-status-over bg-status-over-subtle px-4 py-3 text-sm text-status-over"
         >
           <AlertCircle className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
-          <span>{error}</span>
-        </p>
+          <div className="min-w-0 flex-1">
+            <p>{error}</p>
+            <a
+              href={reportUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="focus-ring mt-1.5 inline-block text-xs underline underline-offset-2 transition-opacity hover:opacity-80"
+            >
+              Report this problem
+            </a>
+          </div>
+        </div>
       ) : null}
 
       <section className="results-grid">
@@ -177,6 +199,7 @@ function App() {
             plan={plan}
             loading={loading}
             destinationLabel={destination.selected?.label ?? destination.query}
+            reportUrl={plan ? reportUrl : null}
           />
         </div>
         <div className="results-map">

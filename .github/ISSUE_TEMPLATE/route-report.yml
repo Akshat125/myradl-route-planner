@@ -1,0 +1,30 @@
+name: Route report
+description: Something looks wrong with a route result
+title: "[Route report] "
+labels: ["route-report"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve the planner. The route context below was auto-filled from the app — add a short note if you can.
+  - type: dropdown
+    id: category
+    attributes:
+      label: What seems off?
+      options:
+        - Wrong pickup or drop-off station
+        - Wrong verdict (free / reduced / over)
+        - Route geometry looks wrong on the map
+        - Dock or bike availability was wrong
+        - App error or could not plan route
+        - Other
+  - type: textarea
+    id: description
+    attributes:
+      label: What did you expect instead?
+      placeholder: Optional — one or two sentences is enough
+  - type: textarea
+    id: route_context
+    attributes:
+      label: Route context (auto-filled)
+      description: Please leave this block as-is so we can reproduce the case.

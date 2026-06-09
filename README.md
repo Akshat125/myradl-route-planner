@@ -77,6 +77,14 @@ cp .env.example .env
 npm run dev
 ```
 
+Optional frontend env:
+
+```env
+VITE_GITHUB_REPO=Akshat125/myradl-route-planner
+```
+
+Used by the in-app "Report" links (GitHub issue form with pre-filled route context). Defaults to the repo above if unset.
+
 Using `backend/.venv` keeps Python deps scoped to the backend service and avoids mixing frontend and backend tooling in one environment.
 
 Frontend runs on `http://localhost:5173` and calls backend at `http://localhost:8000`.
