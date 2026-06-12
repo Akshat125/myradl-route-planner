@@ -57,7 +57,7 @@ export type PlanRequest = {
   destination_lng?: number
 }
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
 
 async function parseResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
