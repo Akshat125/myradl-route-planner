@@ -3,11 +3,12 @@ from __future__ import annotations
 from contextlib import asynccontextmanager
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from .config import get_settings
 from .data import DataAccess
+from .feedback import FeedbackRequest, FeedbackService
 from .gbfs import GBFSService
 from .routing import RoutingService
 from .verdict import PlanRequest, VerdictService
@@ -17,6 +18,7 @@ data_access = DataAccess()
 gbfs_service = GBFSService(settings)
 routing_service = RoutingService(settings)
 verdict_service = VerdictService(settings, routing_service)
+feedback_service = FeedbackService(settings)
 scheduler = AsyncIOScheduler(timezone="UTC")
 
 
@@ -50,6 +52,7 @@ async def lifespan(_app: FastAPI):
     scheduler.shutdown(wait=False)
     await gbfs_service.close()
     await routing_service.close()
+    await feedback_service.close()
 
 
 app = FastAPI(title=settings.app_name, lifespan=lifespan)
@@ -108,4 +111,15 @@ async def plan(payload: PlanRequest) -> dict:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     except Exception as exc:
         raise HTTPException(status_code=502, detail=f"Unable to compute plan: {exc}") from exc
+
+
+@app.post("/feedback")
+async def feedback(payload: FeedbackRequest, request: Request) -> dict:
+    try:
+        result = await feedback_service.submit(payload, request)
+        return result.model_dump()
+    except HTTPException:
+        raise
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail="Unable to submit feedback right now.") from exc
 

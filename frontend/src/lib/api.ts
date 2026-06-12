@@ -103,3 +103,27 @@ export async function fetchPlan(payload: PlanRequest): Promise<PlanResponse> {
   return parseResponse<PlanResponse>(res)
 }
 
+export type FeedbackType = 'bug' | 'feature' | 'other'
+
+export type FeedbackRequest = {
+  type: FeedbackType
+  message: string
+  email?: string | null
+  context?: string | null
+  website?: string
+}
+
+export type FeedbackResponse = {
+  ok: boolean
+  issue_url: string
+}
+
+export async function submitFeedback(payload: FeedbackRequest): Promise<FeedbackResponse> {
+  const res = await fetch(`${API_BASE}/feedback`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+  return parseResponse<FeedbackResponse>(res)
+}
+

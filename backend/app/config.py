@@ -30,6 +30,9 @@ class Settings(BaseSettings):
     classic_lower_bound_speed_mps: float = 4.5
     ebike_lower_bound_speed_mps: float = 6.5
 
+    github_feedback_token: str = ""
+    feedback_repo: str = "Akshat125/myradl-route-planner"
+
 
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:

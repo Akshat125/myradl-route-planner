@@ -1,12 +1,8 @@
 import type { BikeType, PlanResponse } from './api'
 
-const GITHUB_REPO = import.meta.env.VITE_GITHUB_REPO ?? 'Akshat125/myradl-route-planner'
-const TEMPLATE = 'route-report.yml'
 const MAX_CONTEXT_LENGTH = 2000
 
-const ERROR_CATEGORY = 'App error or could not plan route'
-
-export type ReportContext = {
+export type FeedbackContext = {
   start: {
     lat: number
     lng: number
@@ -40,7 +36,7 @@ function formatStation(
   return `${station.name} (docks free: ${station.docks_available})`
 }
 
-export function serializeRouteContext(ctx: ReportContext): string {
+export function serializeFeedbackContext(ctx: FeedbackContext): string {
   const lines: string[] = [
     `- Timestamp: ${new Date().toISOString()}`,
     `- App: ${typeof window !== 'undefined' ? window.location.href : 'unknown'}`,
@@ -89,28 +85,4 @@ export function serializeRouteContext(ctx: ReportContext): string {
     text = `${text.slice(0, MAX_CONTEXT_LENGTH - 20)}\n… (truncated)`
   }
   return text
-}
-
-function buildReportTitle(ctx: ReportContext): string {
-  const destination = ctx.destinationLabel ?? ctx.destinationQuery
-  if (ctx.error) return `[Route report] ${ctx.error.slice(0, 80)}`
-  if (destination) return `[Route report] ${destination.slice(0, 80)}`
-  return '[Route report]'
-}
-
-export function buildReportIssueUrl(ctx: ReportContext): string {
-  const routeContext = serializeRouteContext(ctx)
-  const params = new URLSearchParams({
-    template: TEMPLATE,
-    title: buildReportTitle(ctx),
-    // Fallback for when the issue form template is not on GitHub yet.
-    body: `## Route context\n\n${routeContext}\n\n## What seems off?\n\n<!-- Describe what you expected -->\n`,
-    route_context: routeContext,
-  })
-
-  if (ctx.error) {
-    params.set('category', ERROR_CATEGORY)
-  }
-
-  return `https://github.com/${GITHUB_REPO}/issues/new?${params.toString()}`
 }

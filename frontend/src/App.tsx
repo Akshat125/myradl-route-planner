@@ -1,13 +1,14 @@
 import { useCallback, useEffect, useState } from 'react'
-import { AlertCircle, Bike, Moon, Sun } from 'lucide-react'
+import { AlertCircle, Bike, MessageSquare, Moon, Sun } from 'lucide-react'
 
 import './App.css'
+import { FeedbackModal, type FeedbackModalDefaults } from './components/FeedbackModal'
 import { Map } from './components/Map'
 import { SearchBar } from './components/SearchBar'
 import { StartLocationControl } from './components/StartLocationControl'
 import { VerdictCard } from './components/VerdictCard'
 import { fetchPlan, type AddressSuggestion, type BikeType, type PlanResponse } from './lib/api'
-import { buildReportIssueUrl, type ReportContext } from './lib/reportIssue'
+import { serializeFeedbackContext, type FeedbackContext } from './lib/feedbackContext'
 import { useTheme } from './lib/useTheme'
 
 export type StartLocation = {
@@ -33,6 +34,8 @@ function App() {
   const [plan, setPlan] = useState<PlanResponse | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [feedbackOpen, setFeedbackOpen] = useState(false)
+  const [feedbackDefaults, setFeedbackDefaults] = useState<FeedbackModalDefaults>({})
 
   const requestCurrentLocation = useCallback(() => {
     if (!navigator.geolocation) {
@@ -81,7 +84,7 @@ function App() {
     setDestination({ query: text, selected: null })
   }
 
-  const reportContext: ReportContext = {
+  const feedbackContext: FeedbackContext = {
     start,
     destinationQuery: destination.query,
     destinationLabel: destination.selected?.label ?? null,
@@ -90,7 +93,10 @@ function App() {
     error,
   }
 
-  const reportUrl = buildReportIssueUrl(reportContext)
+  const openFeedback = useCallback((defaults: FeedbackModalDefaults = {}) => {
+    setFeedbackDefaults(defaults)
+    setFeedbackOpen(true)
+  }, [])
 
   const submit = async () => {
     if (!start) {
@@ -139,18 +145,29 @@ function App() {
             <p className="text-sm text-muted">Free-ride planner for Munich&rsquo;s bike share</p>
           </div>
         </div>
-        <button
-          type="button"
-          onClick={toggleTheme}
-          aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-          className="focus-ring grid size-10 shrink-0 place-items-center rounded-xl border border-border bg-surface text-muted transition-colors hover:border-border-strong hover:text-foreground"
-        >
-          {theme === 'dark' ? (
-            <Sun className="size-5" aria-hidden="true" />
-          ) : (
-            <Moon className="size-5" aria-hidden="true" />
-          )}
-        </button>
+        <div className="flex shrink-0 items-center gap-2">
+          <button
+            type="button"
+            onClick={() => openFeedback()}
+            aria-label="Send feedback"
+            className="focus-ring inline-flex items-center gap-1.5 rounded-xl border border-border bg-surface px-3 py-2 text-sm font-medium text-muted transition-colors hover:border-border-strong hover:text-foreground"
+          >
+            <MessageSquare className="size-4" aria-hidden="true" />
+            <span className="hidden sm:inline" aria-hidden="true">Feedback</span>
+          </button>
+          <button
+            type="button"
+            onClick={toggleTheme}
+            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            className="focus-ring grid size-10 shrink-0 place-items-center rounded-xl border border-border bg-surface text-muted transition-colors hover:border-border-strong hover:text-foreground"
+          >
+            {theme === 'dark' ? (
+              <Sun className="size-5" aria-hidden="true" />
+            ) : (
+              <Moon className="size-5" aria-hidden="true" />
+            )}
+          </button>
+        </div>
       </header>
 
       <StartLocationControl
@@ -180,14 +197,13 @@ function App() {
           <AlertCircle className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
           <div className="min-w-0 flex-1">
             <p>{error}</p>
-            <a
-              href={reportUrl}
-              target="_blank"
-              rel="noreferrer"
+            <button
+              type="button"
+              onClick={() => openFeedback({ type: 'bug' })}
               className="focus-ring mt-1.5 inline-block text-xs underline underline-offset-2 transition-opacity hover:opacity-80"
             >
-              Report this problem
-            </a>
+              Send feedback about this
+            </button>
           </div>
         </div>
       ) : null}
@@ -199,13 +215,21 @@ function App() {
             plan={plan}
             loading={loading}
             destinationLabel={destination.selected?.label ?? destination.query}
-            reportUrl={plan ? reportUrl : null}
+            onFeedback={plan ? () => openFeedback({ type: 'bug' }) : undefined}
           />
         </div>
         <div className="results-map">
           <Map start={start} plan={plan} theme={theme} />
         </div>
       </section>
+
+      {feedbackOpen ? (
+        <FeedbackModal
+          context={serializeFeedbackContext(feedbackContext)}
+          defaults={feedbackDefaults}
+          onClose={() => setFeedbackOpen(false)}
+        />
+      ) : null}
     </main>
   )
 }

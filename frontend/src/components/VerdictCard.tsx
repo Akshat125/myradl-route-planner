@@ -5,6 +5,7 @@ import {
   CircleAlert,
   CircleX,
   Footprints,
+  MessageSquare,
 } from 'lucide-react'
 import type { ComponentType } from 'react'
 
@@ -17,7 +18,7 @@ type Props = {
   plan: PlanResponse | null
   loading?: boolean
   destinationLabel?: string | null
-  reportUrl?: string | null
+  onFeedback?: () => void
 }
 
 function formatMinutes(seconds: number): string {
@@ -50,7 +51,7 @@ const STATUS_META: Record<
   },
   REDUCED: {
     headline: 'Reduced fare',
-    subtitle: 'E-bike discount applies — bike leg under 30 minutes',
+    subtitle: 'E-bike discount applies, bike leg under 30 minutes',
     icon: CircleAlert,
     heroClass: 'verdict-hero verdict-hero-reduced',
     textClass: 'text-status-reduced',
@@ -96,7 +97,7 @@ function FreshnessLine({ snapshot }: { snapshot: PlanResponse['snapshot'] }) {
   return <p className="mt-4 text-xs text-muted-foreground">Dock data updated {age}</p>
 }
 
-export function VerdictCard({ start, plan, loading, destinationLabel, reportUrl }: Props) {
+export function VerdictCard({ start, plan, loading, destinationLabel, onFeedback }: Props) {
   if (loading) {
     return <VerdictSkeleton />
   }
@@ -209,16 +210,15 @@ export function VerdictCard({ start, plan, loading, destinationLabel, reportUrl 
 
       {plan.note ? <p className="mt-3 text-xs text-muted">{plan.note}</p> : null}
 
-      {reportUrl ? (
-        <a
-          href={reportUrl}
-          target="_blank"
-          rel="noreferrer"
+      {onFeedback ? (
+        <button
+          type="button"
+          onClick={onFeedback}
           className="focus-ring mt-4 inline-flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
         >
+          <MessageSquare className="size-3.5" aria-hidden="true" />
           Something looks wrong?
-          <ArrowUpRight className="size-3.5" aria-hidden="true" />
-        </a>
+        </button>
       ) : null}
     </section>
   )

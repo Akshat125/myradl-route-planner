@@ -34,6 +34,8 @@ The frontend is a Vite React app. The backend is FastAPI.
   - one ORS Directions call for geometry
   - cost/status (`FREE`/`REDUCED`/`OVER`)
   - backup destination station
+- `POST /feedback` - login-free user feedback that creates a GitHub issue
+  server-side (requires `GITHUB_FEEDBACK_TOKEN` on the backend)
 
 ## Freshness Strategy
 
@@ -77,13 +79,11 @@ cp .env.example .env
 npm run dev
 ```
 
-Optional frontend env:
+Frontend env (optional locally; required in production):
 
 ```env
-VITE_GITHUB_REPO=Akshat125/myradl-route-planner
+VITE_API_BASE_URL=http://localhost:8000
 ```
-
-Used by the in-app "Report" links (GitHub issue form with pre-filled route context). Defaults to the repo above if unset.
 
 Using `backend/.venv` keeps Python deps scoped to the backend service and avoids mixing frontend and backend tooling in one environment.
 
@@ -122,6 +122,8 @@ frontend.
   ORS_API_KEY=<your_openrouteservice_key>
   APP_ENV=production
   FRONTEND_ORIGIN=<your_vercel_url>   # set after the frontend is deployed
+  GITHUB_FEEDBACK_TOKEN=<fine_grained_pat_with_issues_write>
+  FEEDBACK_REPO=Akshat125/myradl-route-planner
   ```
 
 ### 2) Frontend on Vercel
