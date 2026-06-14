@@ -18,8 +18,15 @@ class Settings(BaseSettings):
 
     ors_api_key: str = ""
     ors_base_url: str = "https://api.heigit.org/openrouteservice"
-    ors_geocode_url: str = "https://api.heigit.org/pelias/v1"
+
+    photon_base_url: str = "https://photon.komoot.io"
     geocode_limit: int = 5
+    geocode_lang: str = "de"
+    geocode_focus_lat: float = 48.137
+    geocode_focus_lon: float = 11.575
+    # Greater Munich incl. Garching / campus areas (lon_min,lat_min,lon_max,lat_max).
+    geocode_bbox: str = "11.3,48.0,11.8,48.3"
+    geocode_user_agent: str = "myradl-route-planner/1.0 (bikeinmunich.de)"
 
     max_origin_candidates: int = 8
     max_dest_candidates: int = 8

@@ -166,7 +166,10 @@ export function AddressAutocomplete({
               }}
               onMouseEnter={() => setActiveIndex(index)}
             >
-              {s.label}
+              <span className="block">{s.label}</span>
+              {s.secondary ? (
+                <span className="block text-xs text-muted-foreground">{s.secondary}</span>
+              ) : null}
             </li>
           ))}
           {suggestions.length === 0 && error ? (

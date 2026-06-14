@@ -77,6 +77,7 @@ export type AddressSuggestion = {
   label: string
   lat: number
   lng: number
+  secondary?: string
 }
 
 export async function fetchAutocomplete(

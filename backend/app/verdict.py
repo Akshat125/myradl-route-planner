@@ -12,6 +12,7 @@ from .geo import (
     nearest_within_radius,
     walk_seconds_from_straight_line,
 )
+from .geocoding import GeocodingService
 from .routing import RoutingService
 
 
@@ -44,16 +45,21 @@ def _cost_and_status(bike_type: str, bike_duration_s: float) -> tuple[str, float
 
 
 class VerdictService:
-    def __init__(self, settings: Settings, routing: RoutingService) -> None:
+    def __init__(self, settings: Settings, routing: RoutingService, geocoding: GeocodingService) -> None:
         self.settings = settings
         self.routing = routing
+        self.geocoding = geocoding
 
     async def build_plan(self, req: PlanRequest, snapshot: dict[str, Any]) -> dict[str, Any]:
         stations = snapshot["stations"]
         destination_lat = req.destination_lat
         destination_lng = req.destination_lng
         if destination_lat is None or destination_lng is None:
-            destination_lat, destination_lng = await self.routing.geocode(req.destination_query or "")
+            destination_lat, destination_lng = await self.geocoding.geocode(
+                req.destination_query or "",
+                req.start_lat,
+                req.start_lng,
+            )
 
         eligible_origins = [
             s

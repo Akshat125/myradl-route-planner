@@ -10,6 +10,7 @@ from .config import get_settings
 from .data import DataAccess
 from .feedback import FeedbackRequest, FeedbackService
 from .gbfs import GBFSService
+from .geocoding import GeocodingService
 from .routing import RoutingService
 from .verdict import PlanRequest, VerdictService
 
@@ -17,7 +18,8 @@ settings = get_settings()
 data_access = DataAccess()
 gbfs_service = GBFSService(settings)
 routing_service = RoutingService(settings)
-verdict_service = VerdictService(settings, routing_service)
+geocoding_service = GeocodingService(settings)
+verdict_service = VerdictService(settings, routing_service, geocoding_service)
 feedback_service = FeedbackService(settings)
 scheduler = AsyncIOScheduler(timezone="UTC")
 
@@ -52,6 +54,7 @@ async def lifespan(_app: FastAPI):
     scheduler.shutdown(wait=False)
     await gbfs_service.close()
     await routing_service.close()
+    await geocoding_service.close()
     await feedback_service.close()
 
 
@@ -94,7 +97,7 @@ async def geocode_autocomplete(
     if len(query) < 3:
         return {"suggestions": []}
     try:
-        suggestions = await routing_service.autocomplete(query, focus_lat, focus_lng)
+        suggestions = await geocoding_service.autocomplete(query, focus_lat, focus_lng)
         return {"suggestions": suggestions}
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
