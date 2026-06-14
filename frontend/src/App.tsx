@@ -3,12 +3,15 @@ import { AlertCircle, Bike, MessageSquare, Moon, Sun } from 'lucide-react'
 
 import './App.css'
 import { FeedbackModal, type FeedbackModalDefaults } from './components/FeedbackModal'
+import { Footer } from './components/Footer'
+import { Datenschutz, Impressum } from './components/Legal'
 import { Map } from './components/Map'
 import { SearchBar } from './components/SearchBar'
 import { StartLocationControl } from './components/StartLocationControl'
 import { VerdictCard } from './components/VerdictCard'
 import { fetchPlan, type AddressSuggestion, type BikeType, type PlanResponse } from './lib/api'
 import { serializeFeedbackContext, type FeedbackContext } from './lib/feedbackContext'
+import { useHashRoute } from './lib/useHashRoute'
 import { useTheme } from './lib/useTheme'
 
 export type StartLocation = {
@@ -26,6 +29,7 @@ export type DestinationSelection = {
 }
 
 function App() {
+  const route = useHashRoute()
   const { theme, toggleTheme } = useTheme()
   const [bikeType, setBikeType] = useState<BikeType>('classic')
   const [destination, setDestination] = useState<DestinationSelection>({ query: '', selected: null })
@@ -62,9 +66,14 @@ function App() {
   }, [])
 
   useEffect(() => {
+    if (route !== 'home') return
     // eslint-disable-next-line react-hooks/set-state-in-effect
     requestCurrentLocation()
-  }, [requestCurrentLocation])
+  }, [requestCurrentLocation, route])
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [route])
 
   const handleManualStart = (suggestion: AddressSuggestion) => {
     setStart({
@@ -97,6 +106,9 @@ function App() {
     setFeedbackDefaults(defaults)
     setFeedbackOpen(true)
   }, [])
+
+  if (route === 'impressum') return <Impressum />
+  if (route === 'datenschutz') return <Datenschutz />
 
   const submit = async () => {
     if (!start) {
@@ -222,6 +234,8 @@ function App() {
           <Map start={start} plan={plan} theme={theme} />
         </div>
       </section>
+
+      <Footer />
 
       {feedbackOpen ? (
         <FeedbackModal
