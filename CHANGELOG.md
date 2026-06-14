@@ -7,6 +7,19 @@ and the changelog is maintained automatically by
 [release-please](https://github.com/googleapis/release-please) from
 [Conventional Commits](https://www.conventionalcommits.org/).
 
+## [0.3.0](https://github.com/Akshat125/myradl-route-planner/compare/v0.2.0...v0.3.0) (2026-06-14)
+
+
+### Features
+
+* implement user feedback submission via GitHub issues without login ([b1b304b](https://github.com/Akshat125/myradl-route-planner/commit/b1b304b47212ac496a9bd63153a5260c31f65b7d))
+* migrate geocoding engine to photon ([f4a0c8e](https://github.com/Akshat125/myradl-route-planner/commit/f4a0c8eede9ee9a3cb4c00a9bfbb1d81c56343ba))
+
+
+### Bug Fixes
+
+* use || fallback for VITE_API_BASE_URL to handle empty string env var ([ae8e7f0](https://github.com/Akshat125/myradl-route-planner/commit/ae8e7f071f7133f9c21db2b7cf7e1a7ac5ea586c))
+
 ## [0.2.0](https://github.com/Akshat125/myradl-route-planner/compare/v0.1.0...v0.2.0) (2026-06-09)
 
 
