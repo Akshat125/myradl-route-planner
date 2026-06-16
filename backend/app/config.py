@@ -24,13 +24,13 @@ class Settings(BaseSettings):
     geocode_lang: str = "de"
     geocode_focus_lat: float = 48.137
     geocode_focus_lon: float = 11.575
-    # Greater Munich incl. Garching / campus areas (lon_min,lat_min,lon_max,lat_max).
-    geocode_bbox: str = "11.3,48.0,11.8,48.3"
+    # Full nextbike_ml station footprint (lon_min,lat_min,lon_max,lat_max).
+    geocode_bbox: str = "11.15,47.87,11.77,48.34"
     geocode_user_agent: str = "myradl-route-planner/1.0 (bikeinmunich.de)"
 
     max_origin_candidates: int = 8
     max_dest_candidates: int = 8
-    station_walk_radius_m: float = 450.0
+    station_walk_radius_m: float = 600.0
     enforce_destination_docks: bool = False
     walk_speed_mps: float = 1.4
     walk_detour_factor: float = 1.3
