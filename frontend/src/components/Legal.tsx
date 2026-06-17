@@ -75,8 +75,8 @@ export function Datenschutz() {
         <SectionHeading>2. Grundsatz</SectionHeading>
         <p>
           Dieser Dienst ist auf Datensparsamkeit ausgelegt. Es gibt keine Benutzerkonten, keine
-          Werbung, keine Tracking- oder Analyse-Tools und keine Cookies zu Marketingzwecken. Es
-          werden nur die Daten verarbeitet, die zur Routenplanung notwendig sind.
+          Werbung und keine Cookies zu Marketingzwecken. Zur Nutzungsstatistik setzen wir ein
+          cookiefreies Web-Analyse-Tool ein (siehe Abschnitt 3 h).
         </p>
       </section>
 
@@ -125,6 +125,13 @@ export function Datenschutz() {
           anklicken, werden die betreffenden Koordinaten an Google übertragen. Rechtsgrundlage:
           Art. 6 Abs. 1 lit. f DSGVO.
         </p>
+        <p className="mt-2">
+          <strong className="font-medium text-foreground">h) Web-Analyse.</strong> Wir nutzen Vercel
+          Web Analytics, um anonymisierte Nutzungsstatistiken zu erheben (z. B. Seitenaufrufe,
+          Herkunftsseite, Land, Browser). Es werden keine Cookies gesetzt und keine Nutzerprofile über
+          Websites hinweg erstellt. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO (berechtigtes
+          Interesse an der Auswertung der Website-Nutzung).
+        </p>
       </section>
 
       <section>
@@ -137,7 +144,7 @@ export function Datenschutz() {
           <li>CARTO (Karten-Stil im dunklen Modus) – USA</li>
           <li>Google (nur bei Klick auf einen Karten-Link) – USA</li>
           <li>GitHub, Inc. (Feedback) – USA</li>
-          <li>Vercel Inc. (Hosting Frontend) – USA</li>
+          <li>Vercel Inc. (Hosting Frontend, Web-Analyse) – USA</li>
           <li>Railway Corp. (Hosting Backend) – USA</li>
         </ul>
         <p className="mt-2">
@@ -152,7 +159,8 @@ export function Datenschutz() {
         <p>
           Der Dienst speichert keine Routenanfragen dauerhaft. Feedback-Nachrichten bleiben so lange
           gespeichert, wie es zur Bearbeitung erforderlich ist. Für Server-Logs gelten die
-          Löschfristen der jeweiligen Hosting-Dienstleister.
+          Löschfristen der jeweiligen Hosting-Dienstleister. Web-Analyse-Daten werden von Vercel für
+          bis zu einem Monat aufbewahrt.
         </p>
       </section>
 
